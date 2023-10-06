@@ -7,7 +7,7 @@ env:
   MY_GLOBAL_VAR: 'global'
 
 jobs:
-  run-tests:
+  run-tests-container:
     runs-on: ubuntu-latest
     container:
       image: ubuntu:20.04
@@ -54,3 +54,48 @@ jobs:
           if-no-files-found: error
           path: |
             ${{env.RUNNER_TEMP}}/log.txt
+
+  run-tests-normal:
+    runs-on: ubuntu-latest
+    env:
+      MY_JOB_VAR: 'job'
+    steps:
+      - name: Dump Important folders value
+        run: |
+          echo "github.workspace=${{ github.workspace }}"
+          echo "GITHUB_WORKSPACE=${GITHUB_WORKSPACE}"
+          echo "runner.temp=${{ runner.temp }}"
+          echo "RUNNER_TEMP=${RUNNER_TEMP}"
+
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "${GITHUB_CONTEXT}"
+
+      - name: Dump Runner context
+        env:
+          RUNNER_CONTEXT: ${{ toJson(runner) }}
+        run: echo "${RUNNER_CONTEXT}"
+
+      - name: Dump env context
+        env:
+          ENV_CONTEXT: ${{ toJson(env) }}
+        run: echo "${ENV_CONTEXT}"
+
+      - name: Dump Environment
+        run: env | sort
+
+      - name: create test file
+        run: |
+          echo "Test File" > "${RUNNER_TEMP}/log.txt"
+          cat "${RUNNER_TEMP}/log.txt"
+
+      - name: upload test file
+        if: success() || failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          if-no-files-found: error
+          path: |
+            ${{env.RUNNER_TEMP}}/log.txt
+
