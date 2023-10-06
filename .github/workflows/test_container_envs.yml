@@ -33,6 +33,9 @@ jobs:
           RUNNER_CONTEXT: ${{ toJson(runner) }}
         run: echo "${RUNNER_CONTEXT}"
 
+      - name: add a customp env variable
+        run: echo "OUT_FOLDER=${RUNNER_TEMP}" >> "$GITHUB_ENV"
+
       - name: Dump env context
         env:
           ENV_CONTEXT: ${{ toJson(env) }}
@@ -43,8 +46,8 @@ jobs:
 
       - name: create test file
         run: |
-          echo "Test File" > "${RUNNER_TEMP}/log.txt"
-          cat "${RUNNER_TEMP}/log.txt"
+          echo "Test File" > "${OUT_FOLDER}/log.txt"
+          cat "${OUT_FOLDER}/log.txt"
 
       - name: upload test file
         if: success() || failure()
@@ -53,7 +56,7 @@ jobs:
           name: test-results
           if-no-files-found: error
           path: |
-            ${{env.RUNNER_TEMP}}/log.txt
+            ${{env.OUT_FOLDER}}/log.txt
 
   run-tests-normal:
     runs-on: ubuntu-latest
