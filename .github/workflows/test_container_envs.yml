@@ -26,8 +26,10 @@ jobs:
           RUNNER_CONTEXT: ${{ toJson(runner) }}
         run: echo "${RUNNER_CONTEXT}"
 
-      - name: test env context
-        run: echo ${{ env.RUNNER_TEMP }}
+      - name: Dump env context
+        env:
+          ENV_CONTEXT: ${{ toJson(env) }}
+        run: echo "${ENV_CONTEXT}"
 
       - name: Dump Environment
         run: env | sort
