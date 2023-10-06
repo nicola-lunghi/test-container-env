@@ -25,3 +25,18 @@ jobs:
         env:
           RUNNER_CONTEXT: ${{ toJson(runner) }}
         run: echo "${RUNNER_CONTEXT}"
+
+      - name: test env context
+        run: echo ${{ env.RUNNER_TEMP }}
+
+      - name: create test file
+        run: echo "Test File" > "${RUNNER_TEMP}/log.txt"
+
+      - name: upload test file
+        if: success() || failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          if-no-files-found: error
+          path: |
+            ${{env.RUNNER_TEMP}}/log.txt
