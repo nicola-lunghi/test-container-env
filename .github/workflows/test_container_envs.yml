@@ -3,11 +3,18 @@ on:
   workflow_dispatch:
   push:
 
+env:
+  MY_GLOBAL_VAR: 'global'
+
 jobs:
   run-tests:
     runs-on: ubuntu-latest
     container:
       image: ubuntu:20.04
+      env:
+        MY_CONTAINER_VAR: 'container'
+    env:
+      MY_JOB_VAR: 'job'
     steps:
       - name: Dump Important folders value
         run: |
