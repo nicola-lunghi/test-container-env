@@ -29,8 +29,13 @@ jobs:
       - name: test env context
         run: echo ${{ env.RUNNER_TEMP }}
 
+      - name: Dump Environment
+        run: env | sort
+
       - name: create test file
-        run: echo "Test File" > "${RUNNER_TEMP}/log.txt"
+        run: |
+          echo "Test File" > "${RUNNER_TEMP}/log.txt"
+          cat "${RUNNER_TEMP}/log.txt"
 
       - name: upload test file
         if: success() || failure()
